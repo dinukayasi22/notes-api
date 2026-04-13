@@ -20,7 +20,7 @@ error() { echo -e "${RED}[ERROR]${NC} $1"; exit 1; }
 
 # ─── Config ──────────────────────────────────
 APP_DIR="/home/ubuntu/notes-api"
-REPO_URL="https://github.com/your-username/notes-api.git"
+REPO_URL="https://github.com/dinukayasi22/notes-api.git"
 BRANCH="main"
 
 # ─── Check app directory exists ──────────────

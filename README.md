@@ -112,9 +112,6 @@ cd notes-api
 
 ### 2. Set Up Environment Variables
 
-```bash
-cp .env.example .env
-```
 
 ```env
 SUPABASE_URL=your_supabase_project_url
@@ -162,8 +159,8 @@ cd terraform
 # Generate SSH key
 ssh-keygen -t rsa -b 4096 -f ~/.ssh/notes-api-key
 
-# Copy example vars
-cp terraform.tfvars.example terraform.tfvars
+# initialize vars
+vim terraform.tfvars
 
 # Initialize Terraform
 terraform init

@@ -300,7 +300,7 @@ curl -X DELETE http://localhost:5000/api/notes/<id>
 
 ## 👨‍💻 Author
 
-**Dinuka Yasi** — [GitHub](https://github.com/dinukayasi22)
+**Dinuka Yasintha** — [GitHub](https://github.com/dinukayasi22)
 
 ---
 

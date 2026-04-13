@@ -1,277 +1,309 @@
-# Notes API
+# 📝 Notes API — Full DevOps Pipeline on AWS EC2
 
-A simple REST API for managing notes, built with Node.js, Express, and Supabase.
+A production-ready REST API for managing notes, built with **Node.js + Express + Supabase**, fully containerized with **Docker**, provisioned with **Terraform**, automated with **Bash scripts**, and deployed via a **Jenkins CI/CD pipeline** on AWS EC2.
 
-## Overview
+> Built as a hands-on DevOps project covering the full software delivery lifecycle — from code to cloud.
 
-This project provides CRUD endpoints for notes:
+---
 
-- List all notes
-- Get a note by ID
-- Create a note
-- Update a note
-- Delete a note
-- Health check endpoint for monitoring
+## 🏗️ Architecture
 
-The API stores data in a Supabase Postgres table and includes Docker support for deployment.
+```
+Developer pushes code
+        ↓
+┌───────────────────┐
+│      GitHub       │
+└────────┬──────────┘
+         │ triggers
+┌────────▼──────────┐
+│     Jenkins       │  ← Running on AWS EC2
+│   CI/CD Pipeline  │
+└────────┬──────────┘
+         │ deploys
+┌────────▼──────────┐
+│   Docker Container│  ← Notes API
+│   Node.js/Express │
+└────────┬──────────┘
+         │ connects
+┌────────▼──────────┐
+│     Supabase      │  ← PostgreSQL Database
+└───────────────────┘
 
-## Tech Stack
-
-- Node.js
-- Express
-- Supabase JavaScript client (`@supabase/supabase-js`)
-- Docker + Docker Compose
-- Bash utility scripts (server setup, deployment, health checks)
-
-## Project Structure
-
-```text
-notes-api/
-|- index.js                  # App entrypoint, middleware, routes, health check
-|- routes/
-|  \- notes.js               # Notes CRUD endpoints
-|- db/
-|  \- supabase.js            # Supabase client setup
-|- schema.sql                # SQL schema, trigger, RLS policy, seed data
-|- Dockerfile                # Container build file
-|- docker-compose.yml        # Compose service definition
-|- scripts/
-|  |- setup.sh               # Ubuntu server bootstrap (Docker + Compose)
-|  |- deploy.sh              # Pull latest code and redeploy containers
-|  \- healthcheck.sh         # API/container health check utility
-|- package.json
-\- .env                      # Environment variables (local)
+Infrastructure provisioned by Terraform
+Server configured by Bash scripts
 ```
 
-## API Base URL
+---
 
-Local default:
+## 🛠️ Tech Stack
 
-- `http://localhost:5000`
+| Layer | Technology |
+|---|---|
+| Runtime | Node.js + Express |
+| Database | Supabase (PostgreSQL) |
+| Containerization | Docker + Docker Compose |
+| Infrastructure | Terraform + AWS EC2 |
+| CI/CD | Jenkins |
+| Automation | Bash Scripts |
+| Source Control | GitHub |
 
-Main route prefix:
+---
 
-- `http://localhost:5000/api/notes`
+## ✨ Features
 
-Health endpoint:
+- ✅ Full CRUD for notes (Create, Read, Update, Delete)
+- ✅ Health check endpoint for monitoring
+- ✅ Dockerized with health checks
+- ✅ Infrastructure as Code with Terraform
+- ✅ Automated server setup with Bash
+- ✅ Jenkins pipeline with 7 stages
+- ✅ Auto-deploy on every GitHub push
 
-- `http://localhost:5000/api/health`
+---
 
-## Environment Variables
+## 📁 Project Structure
 
-Create a `.env` file in the project root:
+```
+notes-api/
+├── index.js                  # App entrypoint
+├── routes/
+│   └── notes.js              # CRUD endpoints
+├── db/
+│   └── supabase.js           # Supabase client
+├── schema.sql                # DB schema, triggers, RLS, seed data
+├── Dockerfile                # Container build
+├── docker-compose.yml        # Service definition
+├── Jenkinsfile               # CI/CD pipeline (7 stages)
+├── scripts/
+│   ├── setup.sh              # Bootstrap fresh Ubuntu server
+│   ├── deploy.sh             # Pull & redeploy containers
+│   └── healthcheck.sh        # API health check with retries
+├── terraform/
+│   ├── main.tf               # EC2, security group, key pair
+│   ├── variables.tf          # Configurable variables
+│   ├── outputs.tf            # IP, SSH command, API URL
+│   └── terraform.tfvars.example
+├── package.json
+└── .env.example
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) v18+
+- [Docker](https://docs.docker.com/get-docker/) + Docker Compose
+- [Terraform](https://developer.hashicorp.com/terraform/install) v5+
+- [Supabase](https://supabase.com) account
+- AWS account with CLI configured
+
+---
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/dinukayasi22/notes-api.git
+cd notes-api
+```
+
+---
+
+### 2. Set Up Environment Variables
+
+```bash
+cp .env.example .env
+```
 
 ```env
 SUPABASE_URL=your_supabase_project_url
-SUPABASE_KEY=your_supabase_key
+SUPABASE_KEY=your_supabase_anon_key
 CORS_ORIGIN=*
 PORT=5000
 ```
 
-### Required
+> ⚠️ Never commit `.env` to GitHub.
 
-- `SUPABASE_URL`
-- `SUPABASE_KEY`
+---
 
-If either required variable is missing, the app exits during startup.
+### 3. Set Up the Database
 
-## Database Setup (Supabase)
+Run `schema.sql` in your **Supabase SQL Editor** to create the `notes` table, triggers, RLS policies, and seed data.
 
-Run `schema.sql` in your Supabase SQL editor to create:
+---
 
-- `notes` table
-- `updated_at` trigger function + trigger
-- Row Level Security enabled
-- Open policy (`Allow all access`)
-- Seed rows
-
-## Run Locally (Without Docker)
-
-### 1) Install dependencies
+### 4. Run Locally
 
 ```bash
 npm install
-```
-
-### 2) Start in development mode
-
-```bash
 npm run dev
 ```
 
-### 3) Or start normally
+---
 
-```bash
-npm start
-```
-
-## Run with Docker
-
-### Build and run
+### 5. Run with Docker
 
 ```bash
 docker compose up --build -d
 ```
 
-### Stop
+Visit: `http://localhost:5000/api/health`
+
+---
+
+## ☁️ Infrastructure Setup with Terraform
+
+Provision the entire AWS infrastructure with one command:
 
 ```bash
-docker compose down
+cd terraform
+
+# Generate SSH key
+ssh-keygen -t rsa -b 4096 -f ~/.ssh/notes-api-key
+
+# Copy example vars
+cp terraform.tfvars.example terraform.tfvars
+
+# Initialize Terraform
+terraform init
+
+# Preview infrastructure
+terraform plan
+
+# Provision EC2, security group, key pair
+terraform apply
 ```
 
-The container exposes port `5000` and includes a Docker health check to `/api/health`.
-
-## API Endpoints
-
-### 1) Get all notes
-
-- Method: `GET`
-- URL: `/api/notes`
-- Response: `200 OK` with array of notes (newest first)
-
-### 2) Get note by ID
-
-- Method: `GET`
-- URL: `/api/notes/:id`
-- Response: `200 OK` with note object
-
-### 3) Create note
-
-- Method: `POST`
-- URL: `/api/notes`
-- Body:
-
-```json
-{
-  "title": "My Note",
-  "content": "Optional note content"
-}
+Terraform will output:
+```
+instance_public_ip = "x.x.x.x"
+ssh_command        = "ssh -i ~/.ssh/notes-api-key ubuntu@x.x.x.x"
+api_url            = "http://x.x.x.x:5000/api/notes"
 ```
 
-- Validation: `title` is required
-- Response: `201 Created` with inserted note
+> ⚠️ Run `terraform destroy` when done to avoid AWS charges.
 
-### 4) Update note
+---
 
-- Method: `PUT`
-- URL: `/api/notes/:id`
-- Body:
+## 🤖 Jenkins CI/CD Pipeline
 
-```json
-{
-  "title": "Updated title",
-  "content": "Updated content"
-}
+The `Jenkinsfile` defines a 7-stage pipeline:
+
+```
+✅ Checkout          → Pull latest code from GitHub
+✅ Verify Tools      → Confirm Docker is available
+✅ Build             → Build Docker image
+✅ Stop Old          → Remove existing containers
+✅ Deploy            → Start new containers
+✅ Health Check      → Verify API is responding
+✅ Cleanup           → Prune unused Docker images
 ```
 
-- Response: `200 OK` with updated note
+Every `git push` to `main` triggers an automatic deployment.
 
-### 5) Delete note
+---
 
-- Method: `DELETE`
-- URL: `/api/notes/:id`
-- Response: `200 OK` with success message
+## 🔧 Bash Scripts
 
-### 6) Health check
-
-- Method: `GET`
-- URL: `/api/health`
-- Response:
-
-```json
-{
-  "status": "ok",
-  "timestamp": "2026-04-13T00:00:00.000Z"
-}
+### `setup.sh` — Bootstrap a fresh server
+```bash
+sudo bash scripts/setup.sh
 ```
+Installs Docker, Docker Compose, Git and configures the server.
 
-## Example cURL Commands
+### `deploy.sh` — Deploy latest code
+```bash
+bash scripts/deploy.sh
+```
+Pulls latest code, rebuilds and restarts containers, prunes old images.
+
+### `healthcheck.sh` — Verify the API is running
+```bash
+bash scripts/healthcheck.sh
+```
+Hits `/api/health` with retries and prints container status, memory and disk usage.
+
+---
+
+## 🔌 API Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/health` | Health check |
+| GET | `/api/notes` | Get all notes |
+| GET | `/api/notes/:id` | Get a single note |
+| POST | `/api/notes` | Create a note |
+| PUT | `/api/notes/:id` | Update a note |
+| DELETE | `/api/notes/:id` | Delete a note |
+
+---
+
+## 📋 Example cURL Commands
 
 ```bash
-# Health
+# Health check
 curl http://localhost:5000/api/health
 
 # Get all notes
 curl http://localhost:5000/api/notes
 
-# Create note
+# Create a note
 curl -X POST http://localhost:5000/api/notes \
   -H "Content-Type: application/json" \
-  -d '{"title":"Learn Docker","content":"Use docker compose for local runs"}'
+  -d '{"title":"Learn Terraform","content":"Infrastructure as code"}'
 
-# Get one note
-curl http://localhost:5000/api/notes/<note-id>
-
-# Update note
-curl -X PUT http://localhost:5000/api/notes/<note-id> \
+# Update a note
+curl -X PUT http://localhost:5000/api/notes/<id> \
   -H "Content-Type: application/json" \
-  -d '{"title":"Updated","content":"Updated content"}'
+  -d '{"title":"Updated title","content":"Updated content"}'
 
-# Delete note
-curl -X DELETE http://localhost:5000/api/notes/<note-id>
+# Delete a note
+curl -X DELETE http://localhost:5000/api/notes/<id>
 ```
 
-## Deployment Scripts (`scripts/`)
+---
 
-### `setup.sh`
+## 🔐 Environment Variables
 
-Bootstraps a fresh Ubuntu server:
+| Variable | Required | Description |
+|---|---|---|
+| `SUPABASE_URL` | ✅ | Supabase project URL |
+| `SUPABASE_KEY` | ✅ | Supabase anon key |
+| `CORS_ORIGIN` | ❌ | Allowed origin (default: `*`) |
+| `PORT` | ❌ | Server port (default: `5000`) |
 
-- Updates packages
-- Installs Docker + Docker Compose plugin
-- Adds `ubuntu` user to docker group
-- Enables Docker service on startup
+---
 
-Run as root:
+## 🗺️ What I Learned
 
-```bash
-sudo bash scripts/setup.sh
-```
+- Writing production `Dockerfile`s with health checks
+- Orchestrating services with Docker Compose
+- Provisioning AWS infrastructure as code with Terraform
+- Automating server setup and deployments with Bash
+- Building a full Jenkins CI/CD pipeline from scratch
+- Managing secrets and environment variables securely
 
-### `deploy.sh`
+---
 
-Deploy flow:
+## 🔮 Future Improvements
 
-- Clone or pull latest repo in `/home/ubuntu/notes-api`
-- Ensure `.env` exists
-- `docker compose down`
-- `docker compose up --build -d`
-- Prune unused images
+- [ ] Add GitHub Actions as an alternative CI/CD pipeline
+- [ ] Add authentication with JWT or Supabase Auth
+- [ ] Add request validation with Joi or Zod
+- [ ] Add unit and integration tests
+- [ ] Add monitoring with Prometheus + Grafana
+- [ ] Migrate to Kubernetes with Minikube
+- [ ] Add HTTPS with Let's Encrypt SSL
 
-Run:
+---
 
-```bash
-bash scripts/deploy.sh
-```
+## 👨‍💻 Author
 
-Before first use, update `REPO_URL` in `scripts/deploy.sh`.
+**Dinuka Yasi** — [GitHub](https://github.com/dinukayasi22)
 
-### `healthcheck.sh`
+---
 
-Checks `/api/health` with retries and prints diagnostics (container status, memory, disk, logs).
+## 📄 License
 
-Run:
-
-```bash
-bash scripts/healthcheck.sh
-```
-
-## Current Notes / Caveats
-
-- No authentication is implemented.
-- Current RLS policy in `schema.sql` allows all operations.
-- CORS defaults to `*` unless overridden.
-- No automated tests are currently configured.
-
-## Recommended Next Improvements
-
-- Add auth (JWT or Supabase Auth)
-- Tighten Supabase RLS policies
-- Add request validation (e.g., Joi/Zod)
-- Add centralized error handling
-- Add tests (unit + integration) and CI pipeline
-- Add pagination/filtering for `GET /api/notes`
-
-## License
-
-No license file is currently included. Add one (for example MIT) if needed.
+This project is open source and available under the [MIT License](LICENSE).

@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         APP_DIR    = '/home/ubuntu/notes-api'
-        REPO_URL   = 'https://github.com/your-username/notes-api.git'
+        REPO_URL   = 'https://github.com/dinukayasi22/notes-api.git'
         BRANCH     = 'main'
         IMAGE_NAME = 'notes-api'
     }

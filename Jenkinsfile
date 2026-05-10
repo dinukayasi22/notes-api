@@ -13,7 +13,7 @@ pipeline {
         // ─── Stage 1: Clone or Pull Latest Code ──────
         stage('Checkout') {
             steps {
-                echo '📥 Pulling latest code from GitHub...'
+                echo 'Pulling latest code from GitHub...'
                 git branch: "${BRANCH}",
                     url: "${REPO_URL}"
             }
@@ -31,7 +31,7 @@ pipeline {
         // ─── Stage 3: Build Docker Image ─────────────
         stage('Build') {
             steps {
-                echo '🐳 Building Docker image...'
+                echo 'Building Docker image...'
                 sh 'docker compose build'
             }
         }
@@ -39,7 +39,7 @@ pipeline {
         // ─── Stage 4: Stop Old Containers ────────────
         stage('Stop Old Containers') {
             steps {
-                echo '🛑 Stopping existing containers...'
+                echo 'Stopping existing containers...'
                 sh 'docker compose down || true'
             }
         }
@@ -47,7 +47,7 @@ pipeline {
         // ─── Stage 5: Deploy ──────────────────────────
         stage('Deploy') {
             steps {
-                echo '🚀 Deploying app...'
+                echo 'Deploying app...'
                 sh 'docker compose up -d'
             }
         }
@@ -55,7 +55,7 @@ pipeline {
         // ─── Stage 6: Health Check ────────────────────
         stage('Health Check') {
             steps {
-                echo '❤️ Running health check...'
+                echo 'Running health check...'
                 sh '''
                     sleep 5
                     curl -f http://localhost:5000/api/health || exit 1
@@ -67,7 +67,7 @@ pipeline {
         // ─── Stage 7: Cleanup ─────────────────────────
         stage('Cleanup') {
             steps {
-                echo '🧹 Cleaning up unused Docker images...'
+                echo 'Cleaning up unused Docker images...'
                 sh 'docker image prune -f'
             }
         }
@@ -76,13 +76,13 @@ pipeline {
     // ─── Post Actions ─────────────────────────────────
     post {
         success {
-            echo '🎉 Pipeline completed successfully! App is live.'
+            echo 'Pipeline completed successfully! App is live.'
         }
         failure {
-            echo '❌ Pipeline failed. Check the logs above.'
+            echo 'Pipeline failed. Check the logs above.'
         }
         always {
-            echo '📋 Pipeline finished. Check console output for details.'
+            echo 'Pipeline finished. Check console output for details.'
         }
     }
 }

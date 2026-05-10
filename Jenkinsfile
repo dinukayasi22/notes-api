@@ -22,7 +22,7 @@ pipeline {
         // ─── Stage 2: Verify Required Tools ──────────
         stage('Verify Tools') {
             steps {
-                echo '🔍 Verifying Docker is available...'
+                echo 'Verifying Docker is available...'
                 sh 'docker --version'
                 sh 'docker compose version'
             }
@@ -59,7 +59,7 @@ pipeline {
                 sh '''
                     sleep 5
                     curl -f http://localhost:5000/api/health || exit 1
-                    echo "✅ App is healthy!"
+                    echo "App is healthy!"
                 '''
             }
         }
